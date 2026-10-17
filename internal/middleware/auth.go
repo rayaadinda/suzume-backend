@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -38,12 +39,14 @@ func AuthMiddleware(jwtSecret string) gin.HandlerFunc {
 		})
 
 		if err != nil {
+			log.Printf("[Auth] Token validation error: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
 		if !token.Valid {
+			log.Printf("[Auth] Token is invalid")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
@@ -121,12 +124,14 @@ func WebSocketAuthMiddleware(jwtSecret string) gin.HandlerFunc {
 		})
 
 		if err != nil {
+			log.Printf("[WebSocketAuth] Token validation error: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
 		if !token.Valid {
+			log.Printf("[WebSocketAuth] Token is invalid")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return

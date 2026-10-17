@@ -53,14 +53,22 @@ cp .env.example .env
 PORT=8080
 ALLOWED_ORIGINS=http://localhost:3000
 JWT_SECRET=your-secret-key-here-match-frontend
+POSTGRES_DB=suzume
+POSTGRES_USER=suzume
+POSTGRES_PASSWORD=suzume_dev_password
 ```
 
 **Important**: `JWT_SECRET` must match `BETTER_AUTH_SECRET` from frontend `.env.local`
 
+PostgreSQL is included in `docker-compose.yml` and persists data in the
+`postgres-data` Docker volume. The frontend uses the same database through
+`localhost:5432`; the backend uses the Compose hostname `postgres`.
+
 ### Running
 
 ```bash
-# Development
+# Development (start PostgreSQL and the API)
+docker compose up -d
 go run cmd/server/main.go
 
 # Build

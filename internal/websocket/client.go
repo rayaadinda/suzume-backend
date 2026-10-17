@@ -1,4 +1,4 @@
-package websocket
+﻿package websocket
 
 import (
 	"encoding/json"
@@ -19,15 +19,15 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer
-	maxMessageSize = 512
+	maxMessageSize = 1024 * 4
 )
 
 // Client represents a WebSocket client connection
 type Client struct {
-	hub      *Hub
-	conn     *websocket.Conn
-	send     chan []byte
-	userID   string
+	hub    *Hub
+	conn   *websocket.Conn
+	send   chan []byte
+	userID string
 }
 
 // NewClient creates a new WebSocket client
@@ -74,6 +74,10 @@ func (c *Client) readPump() {
 		if msg.Type == MessageTypePing {
 			pongMsg, _ := json.Marshal(Message{Type: MessageTypePong})
 			c.send <- pongMsg
+		} else if msg.Type == MessageTypeJoinRoom && msg.Room != "" {
+			c.hub.JoinRoom(msg.Room, c)
+		} else if msg.Type == MessageTypeLeaveRoom && msg.Room != "" {
+			c.hub.LeaveRoom(msg.Room, c)
 		}
 	}
 }
